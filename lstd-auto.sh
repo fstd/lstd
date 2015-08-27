@@ -48,7 +48,9 @@ s3="elem ' with ' single ' quotes"
 s4="$NL$NL${TAB}lotsa${TAB}newlines and${NL}tabs here.$TAB$NL$NL"
 s5='$(uname) will not expand'
 s6='$TAB will not expand'
-s7="this is$TAB why we  can't have \"nice\"things\""
+s7="this is	 why we  can't have \"nice\"things\""
+# s7 has control characters, not shown on github but this is actually:
+#s7="^C^Athis is^I why we ^F^[ can't have \"nice\"things\"^E"
 smax=7
 
 # Initialize the test list
@@ -56,7 +58,7 @@ list_set lst "$s3" "$s4" "$s5" || Bomb "Failed to list_set three elements"
 list_add_front lst "$s1" "$s2" || Bomb "Failed to list_add_front two elements"
 list_add_back lst "$s6" "$s7" || Bomb "Failed to list_set two elements"
 
-[ $(list_count lst) -eq $smax ] || Bomb "$smax-element list count not seven"
+[ $(list_count lst) -eq $smax ] || Bomb "$smax-element list count not $smax"
 
 # Exercise list_get
 for i in $(seq 1 $smax); do
