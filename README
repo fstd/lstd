@@ -69,7 +69,7 @@ which (re)initializes the 'mylist' list with the contents of the positional
 parameters.
 
 The only character NOT allowed in a list element is the NUL byte. This makes
-the list unusual for dealing with arbitrary binary data (why would we anyway),
+the list unusable for dealing with arbitrary binary data (why would we anyway),
 but it does make it useful for dealing with arbitrarily braindead filenames
 since they also happen to forbit NUL
 
