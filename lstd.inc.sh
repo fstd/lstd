@@ -17,6 +17,10 @@
 # is unreadable gibberish for "initialize the positional parameters from the
 # list that has the name stored in $_lstd_lstnam
 
+
+# Missing/TODO:  Iteration, replace elements from callback, find index by value
+
+
 # Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
 # then encloses the result in single quotes and prints it to standard output
 _lstd_esc()
