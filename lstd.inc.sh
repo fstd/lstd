@@ -14,6 +14,13 @@
 
 # For READING this script, :%s/_lstd_//g is suggested
 
+# The recurring idiom
+#   eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+# is unreadable gibberish for "initialize the positional parameters from the
+# list that has the name stored in $_lstd_lstnam
+
+# Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
+# then encloses the result in single quotes and prints it to standard output
 _lstd_esc()
 {
 	_lstd_input="$1"
@@ -55,12 +62,18 @@ list_insert()
 
 	while [ $# -gt 0 ]; do
 		_lstd_insert_one "$_lstd_lstnam" "$_lstd_index" "$1"
+
+		# If adding at the end using pseudo-index 0, don't increment
+		# the index but just leave it as 0, so we keep adding at the end
+		# Otherwise, increment the index because we'd reverse the order
+		# of new elements if we didn't.
 		[ $_lstd_index -gt 0 ] && _lstd_index=$((_lstd_index+1))
 		shift
 	done
 }
 
-#list_insert's backend
+# list_insert's backend, inserts one element into a list. We need this to be
+# a separate function to enable list_insert to accept multiple elements at once
 _lstd_insert_one()
 {
 	_lstd_lstnam="$1"
@@ -70,6 +83,7 @@ _lstd_insert_one()
 	_lstd_newlst=
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
+	# Index 0 means insert *after* the last element, hence $(($#+1))
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$(($#+1))
 
 	if [ "$_lstd_index" -gt $(($#+1)) -o "$_lstd_index" -le 0 ]; then
@@ -90,6 +104,7 @@ _lstd_insert_one()
 		shift
 	done
 
+	# If we have nothing inserted yet, we insert after the last element.
 	if ! $_lstd_inserted; then
 		_lstd_newlst="$_lstd_newlst $_lstd_elem"
 	fi
@@ -305,6 +320,7 @@ list_slice()
 	_lstd_c=1
 	_lstd_sublst=
 	while [ $# -gt 0 ]; do
+		# Put elements between start index and end index into sublist
 		[ $_lstd_c -ge "$_lstd_sind" -a $_lstd_c -le "$_lstd_eind" ] \
 		    && _lstd_sublst="$_lstd_sublst $(_lstd_esc "$1")"
 
