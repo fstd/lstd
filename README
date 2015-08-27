@@ -214,15 +214,28 @@ list_foreach()     <lstnam> <action>
   Run <action> for each element of list <lstnam>
 
   <action> can be the name of a shell function, or possibly built-in or
-  external command; it is run/called for each list element, supplied as
-  the sole parameter
+  external command; it is run/called for each list element; it is invoked with
+  three arguments, $1 is the list name, $2 is the (numerical) index,
+  $3 is the string stored at that index.
+
+  NOTE THAT only a limited set of operations on the current list is valid
+  from within the <action> callback.  These are safe to use:
+    list_front(),
+    list_back()
+    list_get()
+    list_count()
+    list_dump()
+    list_slice()
+    list_collect()
+    list_replace()  # replace is ONLY SAFE FOR indices <= the current index
 
 list_collect()     <lstnam> <decider> [<outvar>]
   Create a sublist by running <decider> for each element of list <lstnam>
 
   <decider> is the name of a shell function, or possibly built-in or
-  external command; it is run/called for each list element, supplied as
-  the sole parameter. 
+  external command; it is run/called for each list element; it is invoked with
+  three arguments, $1 is the list name, $2 is the (numerical) index,
+  $3 is the string stored at that index.
 
   A new (sub)list is contructed containing all elements for which
   <decider> returned successfully.
@@ -233,8 +246,9 @@ list_retain()      <lstnam> <decider> [<outvar>]
   Manipulate list <lstnam> by running <decider> for each element.
 
   <decider> is the name of a shell function, or possibly built-in or
-  external command; it is run/called for each list element, supplied as
-  the sole parameter. 
+  external command; it is run/called for each list element; it is invoked with
+  three arguments, $1 is the list name, $2 is the (numerical) index,
+  $3 is the string stored at that index.
 
   All elements for that <decider> returns successfully are retained
   in the list, the others are removed.

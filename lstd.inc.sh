@@ -349,9 +349,11 @@ list_foreach()
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
+	_lstd_c=1
 	while [ $# -gt 0 ]; do
-		$_lstd_action "$1"
+		$_lstd_action "$_lstd_lstnam" $_lstd_c "$1"
 		shift
+		_lstd_c=$((_lstd_c+1))
 	done
 
 	return 0
@@ -369,7 +371,7 @@ list_collect()
 	_lstd_c=1
 	_lstd_sublst=
 	while [ $# -gt 0 ]; do
-		if $_lstd_decider "$1"; then
+		if $_lstd_decider "$_lstd_lstnam" $_lstd_c "$1"; then
 			_lstd_sublst="$_lstd_sublst $(_lstd_esc "$1")"
 		fi
 		_lstd_c=$((_lstd_c+1))
@@ -400,7 +402,7 @@ list_retain()
 	_lstd_newlst=
 	_lstd_remlst=
 	while [ $# -gt 0 ]; do
-		if $_lstd_decider "$1"; then
+		if $_lstd_decider "$_lstd_lstnam" $_lstd_c "$1"; then
 			_lstd_newlst="$_lstd_newlst $(_lstd_esc "$1")"
 		else
 			_lstd_remlst="$_lstd_remlst $(_lstd_esc "$1")"
