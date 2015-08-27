@@ -80,7 +80,6 @@ _lstd_insert_one()
 	_lstd_index="$2"
 	_lstd_elem="$(_lstd_esc "$3")"
 
-	_lstd_newlst=
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	# Index 0 means insert *after* the last element, hence $(($#+1))
@@ -94,6 +93,7 @@ _lstd_insert_one()
 
 	_lstd_c=1
 	_lstd_inserted=false
+	_lstd_newlst=
 	while [ $# -gt 0 ]; do
 		if [ $_lstd_c -eq "$_lstd_index" ]; then
 			_lstd_newlst="$_lstd_newlst $_lstd_elem"
@@ -122,7 +122,6 @@ list_replace()
 	_lstd_outvar="$4"
 	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
 
-	_lstd_newlst=
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
@@ -135,6 +134,7 @@ list_replace()
 
 	_lstd_c=1
 	_lstd_relem=
+	_lstd_newlst=
 	while [ $# -gt 0 ]; do
 		if [ $_lstd_c -eq "$_lstd_index" ]; then
 			_lstd_relem="$1"
@@ -177,12 +177,12 @@ list_get()
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
+
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
 		printf 'No element no. %s in %s-sized list `%s`\n' \
 		    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1
 	fi
-
 
 	_lstd_elem=
 	eval "${_lstd_outvar:-_lstd_elem}=\$$_lstd_index"
@@ -237,7 +237,6 @@ list_remove()
 	_lstd_outvar="$3"
 	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
 
-	_lstd_newlst=
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
@@ -250,6 +249,7 @@ list_remove()
 
 	_lstd_c=1
 	_lstd_elem=
+	_lstd_newlst=
 	while [ $# -gt 0 ]; do
 		if [ $_lstd_c -ne "$_lstd_index" ]; then
 			_lstd_newlst="$_lstd_newlst $(_lstd_esc "$1")"
@@ -306,7 +306,6 @@ list_slice()
 		    "$_lstd_eind" "$#-" "$_lstd_lstnam" >&2
 		return 1
 	fi
-
 
 	if [ "$_lstd_eind" -lt "$_lstd_sind" ]; then
 		printf "'last_index' (%s) must be >= 'first_index' (%s) " \
