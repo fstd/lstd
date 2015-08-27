@@ -61,7 +61,9 @@ list_insert()
 	shift 2
 
 	while [ $# -gt 0 ]; do
-		_lstd_insert_one "$_lstd_lstnam" "$_lstd_index" "$1"
+		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_index" "$1"; then
+			return 1
+		fi
 
 		# If adding at the end using pseudo-index 0, don't increment
 		# the index but just leave it as 0, so we keep adding at the end
@@ -70,6 +72,8 @@ list_insert()
 		[ $_lstd_index -gt 0 ] && _lstd_index=$((_lstd_index+1))
 		shift
 	done
+
+	return 0;
 }
 
 # list_insert's backend, inserts one element into a list. We need this to be
