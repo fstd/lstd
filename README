@@ -21,7 +21,8 @@ A `list` is a variable that consists of whitespace-separated `list elements`.
 A `list element` is a string that starts and ends with a single quote. If an
 element needs to contain literal single quotes, they are translated into the
 4-byte sequence '\''
-This exploits the fact that directly adjacent fields are not split by the shell.
+This exploits the fact that directly adjacent tokens are not split into
+separate fields by the shell.
 As an example, if we were to store the string
   what's up
 in a list, the respective list element would be
