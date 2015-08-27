@@ -90,8 +90,8 @@ _lstd_insert_one()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$(($#+1))
 
 	if [ "$_lstd_index" -gt $(($#+1)) -o "$_lstd_index" -le 0 ]; then
-		printf 'Cannot insert at index %s into %s-sized list `%s`\n' \
-		    "$_lstd_index" $# "$_lstd_lstnam" >&2
+		#printf 'Cannot insert at index %s into %s-sized list `%s`\n' \
+		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1;
 	fi
 
@@ -131,8 +131,8 @@ list_replace()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
 
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
-		printf 'Cannot replace index %s in %s-sized list `%s`\n' \
-		    "$_lstd_index" $# "$_lstd_lstnam" >&2
+		#printf 'Cannot replace index %s in %s-sized list `%s`\n' \
+		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1;
 	fi
 
@@ -183,8 +183,8 @@ list_get()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
 
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
-		printf 'No element no. %s in %s-sized list `%s`\n' \
-		    "$_lstd_index" $# "$_lstd_lstnam" >&2
+		#printf 'No element no. %s in %s-sized list `%s`\n' \
+		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
@@ -246,8 +246,8 @@ list_remove()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
 
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
-		printf 'Cannot remove index %s from %s-sized list `%s`\n' \
-		    "$_lstd_index" $# "$_lstd_lstnam" >&2
+		#printf 'Cannot remove index %s from %s-sized list `%s`\n' \
+		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
@@ -300,22 +300,21 @@ list_slice()
 	[ "$_lstd_eind" -eq 0 ] && _lstd_eind=$#
 
 	if [ "$_lstd_sind" -gt $# -o "$_lstd_sind" -le 0 ]; then
-		printf 'Illegal start index %s in %s-sized list `%s`\n' \
-		    "$_lstd_sind" $# "$_lstd_lstnam" >&2
+		#printf 'Illegal start index %s in %s-sized list `%s`\n' \
+		#    "$_lstd_sind" $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
 	if [ "$_lstd_eind" -gt $# -o "$_lstd_eind" -le 0 ]; then
-		printf 'Illegal end index %s in %s-sized list `%s`\n' \
-		    "$_lstd_eind" "$#-" "$_lstd_lstnam" >&2
+		#printf 'Illegal end index %s in %s-sized list `%s`\n' \
+		#    "$_lstd_eind" "$#-" "$_lstd_lstnam" >&2
 		return 1
 	fi
 
 	if [ "$_lstd_eind" -lt "$_lstd_sind" ]; then
-		printf "'last_index' (%s) must be >= 'first_index' (%s) " \
-		    "$_lstd_eind" "$_lstd_sind" >&2
-		printf 'for slicing %s-sized list `%s`\n' $# "$_lstd_lstnam" >&2
-
+		#printf "'last_index' (%s) must be >= 'first_index' (%s) " \
+		#    "$_lstd_eind" "$_lstd_sind" >&2
+		#printf 'for slicing %s-sized list `%s`\n' $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
