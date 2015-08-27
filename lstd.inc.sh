@@ -90,7 +90,7 @@ _lstd_insert_one()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$(($#+1))
 
 	if [ "$_lstd_index" -gt $(($#+1)) -o "$_lstd_index" -le 0 ]; then
-		printf 'Cannot insert at index %s into %s-sized list `%s`' \
+		printf 'Cannot insert at index %s into %s-sized list `%s`\n' \
 		    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1;
 	fi
@@ -131,7 +131,7 @@ list_replace()
 	[ "$_lstd_index" -eq 0 ] && _lstd_index=$#
 
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
-		printf 'Cannot replace index %s in %s-sized list `%s`' \
+		printf 'Cannot replace index %s in %s-sized list `%s`\n' \
 		    "$_lstd_index" $# "$_lstd_lstnam" >&2
 		return 1;
 	fi
@@ -300,13 +300,13 @@ list_slice()
 	[ "$_lstd_eind" -eq 0 ] && _lstd_eind=$#
 
 	if [ "$_lstd_sind" -gt $# -o "$_lstd_sind" -le 0 ]; then
-		printf 'Illegal start index %s in %s-sized list `%s`' \
+		printf 'Illegal start index %s in %s-sized list `%s`\n' \
 		    "$_lstd_sind" $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
 	if [ "$_lstd_eind" -gt $# -o "$_lstd_eind" -le 0 ]; then
-		printf 'Illegal end index %s in %s-sized list `%s`' \
+		printf 'Illegal end index %s in %s-sized list `%s`\n' \
 		    "$_lstd_eind" "$#-" "$_lstd_lstnam" >&2
 		return 1
 	fi
