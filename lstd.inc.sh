@@ -12,6 +12,8 @@
 
 # See README for documentation of these functions.
 
+# For READING this script, :%s/_lstd_//g is suggested
+
 _lstd_esc()
 {
 	_lstd_input="$1"
