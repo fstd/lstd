@@ -422,9 +422,8 @@ list_fromstr()
 	IFS="$_lstd_nifs"
 
 	set -- $_lstd_str
+	IFS="$_lstd_oldifs"
 
 	eval "$_lstd_lstnam="
 	list_add_back "$_lstd_lstnam" "$@"
-
-	IFS="$_lstd_oldifs"
 }
