@@ -254,7 +254,7 @@ list_remove()
 		if [ $_lstd_c -ne "$_lstd_index" ]; then
 			_lstd_newlst="$_lstd_newlst $(_lstd_esc "$1")"
 		else
-			_lstd_elem="$(_lstd_esc "$1")"
+			_lstd_elem="$1"
 		fi
 		_lstd_c=$((_lstd_c+1))
 		shift
