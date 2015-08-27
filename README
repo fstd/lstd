@@ -43,7 +43,7 @@ whitespace:
 This string is directly usable in
   eval "set -- $thelist"
 with (due to the single quotes) no risk of any form of expansion or substituion
-happening behind the scene, i.e. we could legitimately try to add '$(uname)' to
+happening behind the scenes, i.e. we could legitimately try to add '$(uname)' to
 a list, it will not be expanded anywhere.
 
 
@@ -99,7 +99,7 @@ list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
 list_foreach()     <lstnam> <action>
 list_collect()     <lstnam> <decider> [<outvar>]
 list_retain()      <lstnam> <decider> [<outvar>]
-list_fromstr()     <lstnam> <list elements ...>
+list_fromstr()     <lstnam> [<IFS>] "<string>"    # USE WITH CAUTION
 
 NOTE that our indices begin at 1, not at zero.  This is to avoid headaches
 when switching back and forth between the list_*() interface and the
