@@ -1,0 +1,223 @@
+lstd: Supposedly robust POSIX shell list handling
+=================================================
+
+
+--- Name spaces ---
+
+We claim the variable name space _lstd_*.  Use of that name space, or fiddling
+with existing variables in that name space will produce undefined behavior.
+
+We provide our public interface in the list_* function name space (see below).
+All functions are executed in the current shell context (not in subshells), thus
+our claim of a particular variable name space.
+
+We claim the _lstd_* function name space as well.  Do not mess with it, do not
+call _lstd_*() functions.
+
+
+--- Usage and interface overview/documentation ---
+
+To use the list handling routines, source lstd.inc.sh at the start of the script
+  . ./lstd.inc.sh
+
+
+To create a new list, or to clear an existing one, no function call is required.
+Simply set the variable you want your list to contain to the empty string.
+  mylist=
+in subsequent list_*() calls referring to this particular list,
+the <lstnam> parameter has to be 'mylist'.  An arbitrary number of coexisting
+lists can be handled this way.
+
+It is valid to do:
+  eval "set -- $mylist"
+which initializes the positional parameters with this list, where convenient.
+The other way around works as well:
+  list_set mylist "$@"  # (see also below)
+which (re)initializes the 'mylist' list with the contents of the positional
+parameters.
+
+The only character NOT allowed in a list element is the NUL byte. This makes
+the list unusual for dealing with arbitrary binary data (why would we anyway),
+but it does make it useful for dealing with arbitrarily braindead filenames
+since they also happen to forbit NUL
+
+Lists can be copied, passed around, etc like regular variables, because
+that's what they are.
+  listcopy="$mylist"  # Now have two lists
+
+To destroy a list, simply empty the list variable, or unset it
+  mylist=
+
+Apart from that, the following interface is defined to deal with lists.
+(Detailed description below)
+list_set()         <lstnam> <list elements ...>
+list_insert()      <lstnam> <index> <list elements ...>
+list_replace()     <lstnam> <index> <list element>
+list_add_back()    <lstnam> <list elements ...>
+list_add_front()   <lstnam> <list elements ...>
+list_front()       <lstnam> [<outvar>]
+list_back()        <lstnam> [<outvar>]
+list_get()         <lstnam> <index> [<outvar>]
+list_count()       <lstnam> [<outvar>]
+list_dump()        <lstnam>
+list_remove()      <lstnam> <index> [<outvar>]
+list_pop_front()   <lstnam> [<outvar>]
+list_pop_back()    <lstnam> [<outvar>]
+list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
+list_foreach()     <lstnam> <action>
+list_collect()     <lstnam> <decider> [<outvar>]
+list_retain()      <lstnam> <decider> [<outvar>]
+list_fromstr()     <lstnam> <list elements ...>
+
+NOTE that our indices begin at 1, not at zero.  This is to avoid headaches
+when switching back and forth between the list_*() interface and the
+positional parameters, which also are 1-based.
+
+Also note that some functions have an optional parameter <outvar>.
+If this parameter is not empty, it will be interpreted as the output
+variable to assign the result of the operation to (which depending on the 
+function is either a list element or a sublist).
+If the <outvar> parameter is absent, or the empty string, these functions
+will instead write their result to stdout, so that it can be caught with
+command substitution.
+BUT NOTE THAT COMMAND SUBSTITUTION EATS TRAILING NEWLINES, so providing an
+output variable name is preferred, or great caution is advised!
+For example: (suppose we have a list named `mylist`)
+The following is WRONG: if the list element ends in newlines, they're stripped
+  element="$(list_pop_front mylist)"     # WRONG!
+                                       
+The following is SAFE, but tedious to write and read:
+  element="$(list_pop_front mylist; echo x)"; element="${element%x}"  # SAFE
+
+The preferred way is using an output variable name:
+  list_pop_front mylist element  # SAFE, now "$element" contains the list head
+
+The following functions do not share this problem and can safely command-subst-
+ituted with no further safety measures (but still there is no need not to use
+<outvar>):
+  list_count, list_slice, list_collect, list_retain
+
+
+
+(*) In the following paragraph, a function "Outputting" something means as-
+    signing to the variable <outvar>, if provided, or else printing to stdout.
+    In all cases, if just a '0' is provided for <outvar>, no output will
+    be produced
+
+list_set()         <lstnam> <list elements ...>
+  (Re)initialize list <lstnam> with the list elements supplied as arguments
+  This is intended to allow creation of lists from the positional parameters,
+  i.e.  list_set mylist "$@"
+
+list_insert()      <lstnam> <index> <list elements ...>
+  Insert elements <list elements ...> into list <lstnam> at index <index>.
+  The element originally at <index> and all following elements' indices will
+  be incremented by the amount of newly added elements (i.e. shift right)
+
+  <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
+  which case we're adding at the END of the list
+
+list_add_back()    <lstnam> <list elements ...>
+  Convenience function, equiv. to list_insert <lstnam> 0 <list elements ...>
+
+list_add_front()   <lstnam> <list elements ...>
+  Convenience function, equiv. to list_insert <lstnam> 1 <list elements ...>
+
+list_replace()     <lstnam> <index> <list element> [<outvar>]
+  Replace element at index <index> in list <lstnam> with <list element>.
+
+  <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
+  which case it refers to the LAST index
+
+  Outputs(*) the element that was overwritten 
+
+list_get()         <lstnam> <index> [<outvar>]
+  Obtain the element at index <index> in list <lstnam>
+
+  <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
+  which case it refers to the LAST index
+
+  Outputs(*) the obtained element.
+
+list_front()       <lstnam> [<outvar>]
+  Convenience function equivalent to list_get <lstnam> 1 <outvar>
+
+list_back()        <lstnam> [<outvar>]
+  Convenience function equivalent to list_get <lstnam> 0 <outvar>
+
+list_count()       <lstnam> [<outvar>]
+  Outputs(*) the number of elements in list <lstnam>.
+
+list_dump()        <lstnam>
+  For debugging, dump a list to stderr
+
+list_remove()      <lstnam> <index> [<outvar>]
+  Remove element at index <index> from list <lstnam>.
+  The element at index <index> is removed from the list <lstnam>, and all
+  following elements' indices will be decremented by one (i.e. shift left)
+
+  <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
+  which case we're removing the END of the list
+
+  Outputs(*) the removed element
+
+list_pop_front()   <lstnam> [<outvar>]
+  Convenience function equivalent to list_remove <lstnam> 1 <outvar>
+
+list_pop_back()    <lstnam> [<outvar>]
+  Convenience function equivalent to list_remove <lstnam> 0 <outvar>
+
+list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
+  Obtain a sublist containing list <lstnam>'s elements with indices
+  <from_index> through <to_index> (inclusive)
+
+  <from_index> and <to_index> can be numbers between 1 and
+  $(list_count <lstnam>), or zero, in which case they're taken to represent
+  the LAST index availabl.
+  However, <from_index> must be less than or equal to <to_index>
+  
+  Outputs(*) the sublist.
+
+list_foreach()     <lstnam> <action>
+  Run <action> for each element of list <lstnam>
+
+  <action> can be the name of a shell function, or possibly built-in or
+  external command; it is run/called for each list element, supplied as
+  the sole parameter
+
+list_collect()     <lstnam> <decider> [<outvar>]
+  Create a sublist by running <decider> for each element of list <lstnam>
+
+  <decider> is the name of a shell function, or possibly built-in or
+  external command; it is run/called for each list element, supplied as
+  the sole parameter. 
+
+  A new (sub)list is contructed containing all elements for which
+  <decider> returned successfully.
+
+  Outputs(*) the created sublist 
+
+list_retain()      <lstnam> <decider> [<outvar>]
+  Manipulate list <lstnam> by running <decider> for each element.
+
+  <decider> is the name of a shell function, or possibly built-in or
+  external command; it is run/called for each list element, supplied as
+  the sole parameter. 
+
+  All elements for that <decider> returns successfully are retained
+  in the list, the others are removed.
+
+  Outputs(*) the list of elements that were REMOVED(!) from <lstnam>
+
+list_fromstr()     <lstnam> [<IFS>] "<string>"
+  (Re)initialize list <lstnam> with the content of field-splitted <string>
+  If <IFS> is omitted, we split on blank, TAB and newline
+
+  NOTE THAT <string> MUST be a single field (i.e. quote it!), otherwise
+  it WILL end in tears, especially when <IFS> is omitted.
+
+  This function should probably be used with caution and might be dropped
+  if it turns out to be not useful enough to justify its existence.
+
+
+(C) 2015, Timo Buhrmester

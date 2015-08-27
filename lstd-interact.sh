@@ -1,0 +1,61 @@
+#!/bin/sh
+
+# lstd: Supposedly robust POSIX shell list handling -- interactive test script
+# (C) 2015, Timo Buhrmester
+# This is still work in progress
+# <BSD license here>
+
+. ./lstd.inc.sh
+
+commands='set insert replace add_back add_front front back get count dump remove pop_front pop_back slice foreach collect retain fromstr'
+
+Help()
+{
+	printf 'Set the current list with "list <name>"\n'
+	printf 'Valid commands operating on the current list are: %s\n' "$commands"
+	printf 'Quote-aware field splitting is done on the lines entered here\n'
+	printf '\n'
+	printf 'The entered commands will just call the respective list_*\n'
+	printf 'function.  i.e. `insert 5 foobar` causes a call\n'
+	printf 'like `list_insert "$currentlist" 5 foobar`\n'
+	printf '\n'
+	printf 'An example session:\n'
+	printf 'list mylist  #switch to list `mylist`\n'
+	printf 'fromstr "foo bar baz"  # initialize from string literal\n'
+	printf 'add_back "tail element"  # add another element\n'
+	printf 'front # look at the head element'
+	printf 'back # look at the head element'
+	printf 'slice 2 3 sublist  # create sublist containing elements 2, 3\n'
+	printf 'list sublist  # switch to the newly created sublist\n'
+	printf 'dump # look at it\n'
+	printf 'pop_front # pop it\n'
+	printf 'pop_front # pop it empty\n'
+	printf 'list mylist #switch back to `mylist`\n'
+	printf 'dump # look at it\n'
+
+
+}
+
+lstnam=default
+list_dump "$lstnam"
+echo 'Try "help"'
+
+while read -r cmd rest; do
+	e=
+	case "$cmd" in
+	help) Help ;;
+	list) lstnam="$rest" ;;
+	q|quit) break ;;
+	?*) eval "set -- $rest";
+	    if list_$cmd "$lstnam" "$@"; then
+	        echo
+	        case "$cmd" in
+	            dump|front|back|get|count|foreach|collect|slice) ;;
+	            *) echo "List '$lstnam' is now:"; list_dump "$lstnam" ;;
+	        esac
+	    else
+	        echo "$cmd failed"
+	    fi ;;
+	*) : ;;
+	esac
+done
