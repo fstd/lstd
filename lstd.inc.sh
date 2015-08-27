@@ -1,5 +1,3 @@
-#!/bin/sh
-
 # lstd: Supposedly robust POSIX shell list handling
 # (C) 2015, Timo Buhrmester
 # This is still work in progress
