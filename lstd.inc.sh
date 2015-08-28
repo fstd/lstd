@@ -14,16 +14,16 @@
 #       names of its contributors may be used to endorse or promote products
 #       derived from this software without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL TIMO BUHRMESTER BE LIABLE FOR ANY
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL TIMO BUHRMESTER BE LIABLE FOR ANY
 # DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 # (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 # LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+# THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 # We claim the _lstd_* name space (variables and functions)
@@ -339,7 +339,7 @@ list_slice()
 	if [ "$_lstd_eind" -lt "$_lstd_sind" ]; then
 		#printf "'last_index' (%s) must be >= 'first_index' (%s) " \
 		#    "$_lstd_eind" "$_lstd_sind" >&2
-		#printf 'for slicing %s-sized list `%s`\n' $# "$_lstd_lstnam" >&2
+		#printf 'to slice %s-sized list `%s`\n' $# "$_lstd_lstnam" >&2
 		return 1
 	fi
 
@@ -374,7 +374,8 @@ list_foreach()
 	_lstd_fe_lstnam="$1"
 	_lstd_fe_action="$2"
 
-	eval "_lstd_fe_lstdata=\"\$$_lstd_fe_lstnam\""; eval "set -- $_lstd_fe_lstdata"
+	eval "_lstd_fe_lstdata=\"\$$_lstd_fe_lstnam\""
+	eval "set -- $_lstd_fe_lstdata"
 
 	_lstd_fe_retval=0
 	_lstd_fe_c=1
@@ -398,7 +399,8 @@ list_collect()
 	_lstd_cl_outvar="$3"
 	[ "$_lstd_cl_outvar" = '0' ] && _lstd_cl_outvar='_lstd_dummy'
 
-	eval "_lstd_cl_lstdata=\"\$$_lstd_cl_lstnam\""; eval "set -- $_lstd_cl_lstdata"
+	eval "_lstd_cl_lstdata=\"\$$_lstd_cl_lstnam\""
+	eval "set -- $_lstd_cl_lstdata"
 
 	_lstd_cl_c=1
 	_lstd_cl_sublst=
@@ -429,7 +431,8 @@ list_retain()
 	_lstd_rt_outvar="$3"
 	[ "$_lstd_rt_outvar" = '0' ] && _lstd_rt_outvar='_lstd_dummy'
 
-	eval "_lstd_rt_lstdata=\"\$$_lstd_rt_lstnam\""; eval "set -- $_lstd_rt_lstdata"
+	eval "_lstd_rt_lstdata=\"\$$_lstd_rt_lstnam\""
+	eval "set -- $_lstd_rt_lstdata"
 
 	_lstd_rt_c=1
 	_lstd_rt_newlst=
