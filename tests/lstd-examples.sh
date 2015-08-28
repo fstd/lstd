@@ -8,7 +8,7 @@
 # This is still work in progress
 
 
-. ./lstd.inc.sh
+. ../lstd.inc.sh
 
 list_version maj min pat
 echo "lstd version $maj.$min.$pat"

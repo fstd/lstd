@@ -15,7 +15,7 @@ if [ "x$1" = "x-x" ]; then
 	set -x
 fi
 
-. ./lstd.inc.sh
+. ../lstd.inc.sh
 
 Bomb()
 {

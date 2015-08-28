@@ -8,7 +8,7 @@
 # This is still work in progress
 
 
-. ./lstd.inc.sh
+. ../lstd.inc.sh
 
 cmds="set insert replace add_back add_front front back get count dump"
 cmds="$cmds remove pop_front pop_back slice foreach collect retain fromstr"
