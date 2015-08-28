@@ -10,6 +10,8 @@
 
 . ./lstd.inc.sh
 
+list_version maj min pat
+echo "lstd version $maj.$min.$pat"
 
 # Create a list named 'mylist' from direct specification of the elements:
 list_set mylist "head element" "another element" "3rd element"

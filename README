@@ -156,6 +156,7 @@ list_foreach()     <lstnam> <action>
 list_collect()     <lstnam> <decider> [<outvar>]
 list_retain()      <lstnam> <decider> [<outvar>]
 list_fromstr()     <lstnam> [<IFS>] "<string>"    # USE WITH CAUTION
+list_version()     [<outvar_maj>] [<outvar_min>] [<outvar_pat>]
 
 NOTE that our indices begin at 1, not at zero.  This is to avoid headaches
 when switching back and forth between the list_*() interface and the
@@ -393,6 +394,15 @@ list_fromstr()     <lstnam> [<IFS>] "<string>"
 
   This function should probably be used with caution and might be dropped
   if it turns out to be not useful enough to justify its existence.
+
+  Returns successfully.
+
+
+list_version()     [<outvar_maj>] [<outvar_min>] [<outvar_pat>]
+  Query the lstd version. `Major`, `Minor` and `Patch` part of the version
+  are assigned to the variables named $outvar_maj, -min and -pat, respectively.
+  Omitted outvars are ignored.
+  If NO outvar is given, print "Major.Minor.Patch" to standard output.
 
   Returns successfully.
 

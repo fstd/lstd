@@ -25,6 +25,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+_lstd_ver_maj=0
+_lstd_ver_min=0
+_lstd_ver_pat=0
 
 # We claim the _lstd_* name space (variables and functions)
 # We provide our public interface in the list_* function name space
@@ -547,4 +550,22 @@ list_find()
 	fi
 
 	return 0
+}
+
+list_version()
+{
+	_lstd_outvar_maj="$1"
+	_lstd_outvar_min="$2"
+	_lstd_outvar_pat="$3"
+
+	if [ -z "$_lstd_outvar_maj" ]; then
+		printf '%s.%s.%s' \
+		    "$_lstd_ver_maj" "$_lstd_ver_min" "$_lstd_ver_pat"
+	fi
+
+	[ -n "$_lstd_outvar_maj" ] && eval "$_lstd_outvar_maj=$_lstd_ver_maj"
+	[ -n "$_lstd_outvar_min" ] && eval "$_lstd_outvar_min=$_lstd_ver_min"
+	[ -n "$_lstd_outvar_pat" ] && eval "$_lstd_outvar_pat=$_lstd_ver_pat"
+
+	return 0;
 }
