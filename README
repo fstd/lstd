@@ -337,6 +337,10 @@ list_foreach()     <lstnam> <action>
     list_collect()
     list_replace()  # replace is ONLY SAFE FOR indices <= the current index
 
+  Under no circumstances should <action> attempt to call list_foreach(),
+  even for other lists.  We might get around this issue by using the non-POSIX
+  "local" keyword, or with some more "eval", but we currently don't.
+
   Returns successfully if <action> returned successfully for every element
 
 
@@ -350,6 +354,10 @@ list_collect()     <lstnam> <decider> [<outvar>]
 
   A new (sub)list is contructed containing all elements for which
   <decider> returned successfully.
+
+  Under no circumstances should <decider> attempt to call list_collect(),
+  even for other lists.  We might get around this issue by using the non-POSIX
+  "local" keyword, or with some more "eval", but we currently don't.
 
   Outputs(*) the created sublist
 
@@ -366,6 +374,10 @@ list_retain()      <lstnam> <decider> [<outvar>]
 
   All elements for that <decider> returns successfully are retained
   in the list, the others are removed.
+
+  Under no circumstances should <decider> attempt to call list_retain(),
+  even for other lists.  We might get around this issue by using the non-POSIX
+  "local" keyword, or with some more "eval", but we currently don't.
 
   Outputs(*) the list of elements that were REMOVED(!) from <lstnam>
 
