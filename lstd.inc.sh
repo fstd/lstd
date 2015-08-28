@@ -358,7 +358,7 @@ list_foreach()
 		_lstd_c=$((_lstd_c+1))
 	done
 
-	return $retval
+	return $_lstd_retval
 }
 
 list_collect()
