@@ -1,4 +1,12 @@
 #!/bin/sh
+# lstd: Supposedly reliable POSIX shell list handling -- automated test script
+
+# Copyright (c) 2015, Timo Buhrmester
+# All rights reserved.
+
+
+# This is still work in progress
+
 
 trace=false
 if [ "x$1" = "x-x" ]; then

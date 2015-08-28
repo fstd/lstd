@@ -1,5 +1,5 @@
-lstd: Supposedly robust POSIX shell list handling
-=================================================
+lstd: Supposedly reliable POSIX shell list handling
+===================================================
 
 
 --- Name spaces ---
@@ -45,6 +45,12 @@ This string is directly usable in
 with (due to the single quotes) no risk of any form of expansion or substituion
 happening behind the scenes, i.e. we could legitimately try to add '$(uname)' to
 a list, it will not be expanded anywhere.
+
+
+--- License/Author ---
+
+This software was written by Timo Buhrmester and is subjected to a 3-clause
+BSD license.  Feel free to share and hack.  See the LICENSE file for details.
 
 
 --- Usage and interface overview/documentation ---

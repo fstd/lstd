@@ -1,9 +1,12 @@
 #!/bin/sh
+# lstd: Supposedly reliable POSIX shell list handling -- interactive test script
 
-# lstd: Supposedly robust POSIX shell list handling -- interactive test script
-# (C) 2015, Timo Buhrmester
+# Copyright (c) 2015, Timo Buhrmester
+# All rights reserved.
+
+
 # This is still work in progress
-# <BSD license here>
+
 
 . ./lstd.inc.sh
 
