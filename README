@@ -49,9 +49,12 @@ a list, it will not be expanded anywhere.
 
 --- Usage and interface overview/documentation ---
 
+
+Synopsis:
+---------
+
 To use the list handling routines, source lstd.inc.sh at the start of the script
   . ./lstd.inc.sh
-
 
 To create a new list, or to clear an existing one, no function call is required.
 Simply set the variable you want your list to contain to the empty string.
@@ -59,6 +62,55 @@ Simply set the variable you want your list to contain to the empty string.
 in subsequent list_*() calls referring to this particular list,
 the <lstnam> parameter has to be 'mylist'.  An arbitrary number of coexisting
 lists can be handled this way.
+
+Lists can be copied, passed around, etc like regular variables, because
+that's what they are.
+  listcopy="$mylist"  # Now have two lists
+
+To destroy a list, simply empty the list variable, or unset it
+  mylist=
+
+
+Iteration:
+----------
+
+A list can/should be iterated with one of the following idioms:
+
+This is likely the fastest way:
+  eval "set -- $mylist"
+  while [ $# -gt 0 ]; do
+    # do something with "$1" (always use w/ double quotes!)
+    shift
+  done
+
+Or (slower, but also reliable):
+  list_count mylist count
+  c=1
+  while [ $c -le $count ]; do
+    list_get mylist $c elem
+    # do something with "$elem" (always use w/ double quotes!)
+  done
+
+Or even (slower, also reliable, but kills the list):
+  while list_pop_front mylist elem; do
+    # do something with "$elem" (always use w/ double quotes!)
+  done
+
+Or (most flexible):
+  Callback()
+  {
+    listname="$1"
+    index="$2"
+    elem="$3"
+    # Do something, possibly even list_replace "$listname" "$index" "newdata"
+    return 0 # or 1
+  }
+
+  list_foreach mylist Callback
+
+
+General notes:
+---------------
 
 It is valid to do:
   eval "set -- $mylist"
@@ -73,14 +125,11 @@ the list unusable for dealing with arbitrary binary data (why would we anyway),
 but it does make it useful for dealing with arbitrarily braindead filenames
 since they also happen to forbit NUL
 
-Lists can be copied, passed around, etc like regular variables, because
-that's what they are.
-  listcopy="$mylist"  # Now have two lists
 
-To destroy a list, simply empty the list variable, or unset it
-  mylist=
+Interface overview:
+-------------------
 
-Apart from that, the following interface is defined to deal with lists.
+The following interface is defined to deal with lists.
 (Detailed description below)
 list_set()         <lstnam> <list elements ...>
 list_insert()      <lstnam> <index> <list elements ...>
@@ -108,7 +157,7 @@ positional parameters, which also are 1-based.
 
 Also note that some functions have an optional parameter <outvar>.
 If this parameter is not empty, it will be interpreted as the output
-variable to assign the result of the operation to (which depending on the 
+variable to assign the result of the operation to (which depending on the
 function is either a list element or a sublist).
 If the <outvar> parameter is absent, or the empty string, these functions
 will instead write their result to stdout, so that it can be caught with
@@ -118,7 +167,7 @@ output variable name is preferred, or great caution is advised!
 For example: (suppose we have a list named `mylist`)
 The following is WRONG: if the list element ends in newlines, they're stripped
   element="$(list_pop_front mylist)"     # WRONG!
-                                       
+
 The following is SAFE, but tedious to write and read:
   element="$(list_pop_front mylist; echo x)"; element="${element%x}"  # SAFE
 
@@ -142,6 +191,9 @@ list_set()         <lstnam> <list elements ...>
   This is intended to allow creation of lists from the positional parameters,
   i.e.  list_set mylist "$@"
 
+  Returns successfully.
+
+
 list_insert()      <lstnam> <index> <list elements ...>
   Insert elements <list elements ...> into list <lstnam> at index <index>.
   The element originally at <index> and all following elements' indices will
@@ -150,11 +202,20 @@ list_insert()      <lstnam> <index> <list elements ...>
   <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
   which case we're adding at the END of the list
 
+  Returns successfully iff the element(s) were all inserted.
+
+
 list_add_back()    <lstnam> <list elements ...>
   Convenience function, equiv. to list_insert <lstnam> 0 <list elements ...>
 
+  Returns successfully.
+
+
 list_add_front()   <lstnam> <list elements ...>
   Convenience function, equiv. to list_insert <lstnam> 1 <list elements ...>
+
+  Returns successfully.
+
 
 list_replace()     <lstnam> <index> <list element> [<outvar>]
   Replace element at index <index> in list <lstnam> with <list element>.
@@ -162,7 +223,10 @@ list_replace()     <lstnam> <index> <list element> [<outvar>]
   <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
   which case it refers to the LAST index
 
-  Outputs(*) the element that was overwritten 
+  Outputs(*) the element that was overwritten
+
+  Returns successfully iff an element was replaced, even if with the same value.
+
 
 list_get()         <lstnam> <index> [<outvar>]
   Obtain the element at index <index> in list <lstnam>
@@ -172,14 +236,26 @@ list_get()         <lstnam> <index> [<outvar>]
 
   Outputs(*) the obtained element.
 
+  Returns successfully iff an element at the requested index exists.
+
+
 list_front()       <lstnam> [<outvar>]
   Convenience function equivalent to list_get <lstnam> 1 <outvar>
+
+  Returns successfully iff the list is not empty
+
 
 list_back()        <lstnam> [<outvar>]
   Convenience function equivalent to list_get <lstnam> 0 <outvar>
 
+  Returns successfully iff the list is not empty
+
+
 list_count()       <lstnam> [<outvar>]
   Outputs(*) the number of elements in list <lstnam>.
+
+  Returns successfully.
+
 
 list_find()        <lstnam> <list element> [<outvar>]
   Attempts to find an element of list <lstnam> that compares equal to
@@ -187,8 +263,14 @@ list_find()        <lstnam> <list element> [<outvar>]
 
   Outputs(*) the index of the element, if found, zero otherwise
 
+  Returns successfully iff an element was found
+
+
 list_dump()        <lstnam>
   For debugging, dump a list to stderr
+
+  Returns successfully.
+
 
 list_remove()      <lstnam> <index> [<outvar>]
   Remove element at index <index> from list <lstnam>.
@@ -200,11 +282,20 @@ list_remove()      <lstnam> <index> [<outvar>]
 
   Outputs(*) the removed element
 
+  Returns successfully iff an element was removed
+
+
 list_pop_front()   <lstnam> [<outvar>]
   Convenience function equivalent to list_remove <lstnam> 1 <outvar>
 
+  Returns successfully iff the list is not empty
+
+
 list_pop_back()    <lstnam> [<outvar>]
   Convenience function equivalent to list_remove <lstnam> 0 <outvar>
+
+  Returns successfully iff the list is not empty
+
 
 list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
   Obtain a sublist containing list <lstnam>'s elements with indices
@@ -214,8 +305,12 @@ list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
   $(list_count <lstnam>), or zero, in which case they're taken to represent
   the LAST index availabl.
   However, <from_index> must be less than or equal to <to_index>
-  
+
   Outputs(*) the sublist.
+
+  Returns successfully iff the given indices represented a valid range inside
+  the list and hence a sublist could be created
+
 
 list_foreach()     <lstnam> <action>
   Run <action> for each element of list <lstnam>
@@ -236,6 +331,9 @@ list_foreach()     <lstnam> <action>
     list_collect()
     list_replace()  # replace is ONLY SAFE FOR indices <= the current index
 
+  Returns successfully if <action> returned successfully for every element
+
+
 list_collect()     <lstnam> <decider> [<outvar>]
   Create a sublist by running <decider> for each element of list <lstnam>
 
@@ -247,7 +345,10 @@ list_collect()     <lstnam> <decider> [<outvar>]
   A new (sub)list is contructed containing all elements for which
   <decider> returned successfully.
 
-  Outputs(*) the created sublist 
+  Outputs(*) the created sublist
+
+  Returns successfully.
+
 
 list_retain()      <lstnam> <decider> [<outvar>]
   Manipulate list <lstnam> by running <decider> for each element.
@@ -262,6 +363,9 @@ list_retain()      <lstnam> <decider> [<outvar>]
 
   Outputs(*) the list of elements that were REMOVED(!) from <lstnam>
 
+  Returns successfully.
+
+
 list_fromstr()     <lstnam> [<IFS>] "<string>"
   (Re)initialize list <lstnam> with the content of field-splitted <string>
   If <IFS> is omitted, we split on blank, TAB and newline
@@ -271,6 +375,8 @@ list_fromstr()     <lstnam> [<IFS>] "<string>"
 
   This function should probably be used with caution and might be dropped
   if it turns out to be not useful enough to justify its existence.
+
+  Returns successfully.
 
 
 (C) 2015, Timo Buhrmester

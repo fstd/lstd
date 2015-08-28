@@ -18,8 +18,6 @@
 # list that has the name stored in $_lstd_lstnam
 
 
-# Missing/TODO:  Iteration, replace elements from callback, find index by value
-
 
 # Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
 # then encloses the result in single quotes and prints it to standard output
@@ -75,7 +73,7 @@ list_insert()
 		shift
 	done
 
-	return 0;
+	return 0
 }
 
 # list_insert's backend, inserts one element into a list. We need this to be
@@ -94,7 +92,7 @@ _lstd_insert_one()
 	if [ "$_lstd_index" -gt $(($#+1)) -o "$_lstd_index" -le 0 ]; then
 		#printf 'Cannot insert at index %s into %s-sized list `%s`\n' \
 		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
-		return 1;
+		return 1
 	fi
 
 	_lstd_c=1
@@ -135,7 +133,7 @@ list_replace()
 	if [ "$_lstd_index" -gt $# -o "$_lstd_index" -le 0 ]; then
 		#printf 'Cannot replace index %s in %s-sized list `%s`\n' \
 		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
-		return 1;
+		return 1
 	fi
 
 	_lstd_c=1
@@ -349,14 +347,18 @@ list_foreach()
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
+	_lstd_retval=0
 	_lstd_c=1
 	while [ $# -gt 0 ]; do
-		$_lstd_action "$_lstd_lstnam" $_lstd_c "$1"
+		if ! $_lstd_action "$_lstd_lstnam" $_lstd_c "$1"; then
+			_lstd_retval=1
+		fi
+
 		shift
 		_lstd_c=$((_lstd_c+1))
 	done
 
-	return 0
+	return $retval
 }
 
 list_collect()
@@ -458,7 +460,7 @@ list_find()
 	_lstd_str="$2"
 	_lstd_outvar="$3"
 	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
-	
+
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	_lstd_c=1
