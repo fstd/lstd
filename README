@@ -91,6 +91,7 @@ list_front()       <lstnam> [<outvar>]
 list_back()        <lstnam> [<outvar>]
 list_get()         <lstnam> <index> [<outvar>]
 list_count()       <lstnam> [<outvar>]
+list_find()        <lstnam> <list element> [<outvar>]
 list_dump()        <lstnam>
 list_remove()      <lstnam> <index> [<outvar>]
 list_pop_front()   <lstnam> [<outvar>]
@@ -179,6 +180,12 @@ list_back()        <lstnam> [<outvar>]
 
 list_count()       <lstnam> [<outvar>]
   Outputs(*) the number of elements in list <lstnam>.
+
+list_find()        <lstnam> <list element> [<outvar>]
+  Attempts to find an element of list <lstnam> that compares equal to
+  <list element>
+
+  Outputs(*) the index of the element, if found, zero otherwise
 
 list_dump()        <lstnam>
   For debugging, dump a list to stderr

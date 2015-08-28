@@ -451,3 +451,37 @@ list_fromstr()
 	eval "$_lstd_lstnam="
 	list_add_back "$_lstd_lstnam" "$@"
 }
+
+list_find()
+{
+	_lstd_lstnam="$1"
+	_lstd_str="$2"
+	_lstd_outvar="$3"
+	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	
+	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+
+	_lstd_c=1
+	while [ $# -gt 0 ]; do
+		if [ "$1" = "$2" ]; then
+			break
+		fi
+
+		shift
+		_lstd_c=$((_lstd_c+1))
+	done
+
+	if [ $# -eq 0 ]; then
+		#printf 'Did not find element in list `%s`\n' \
+		#    "$_lstd_lstnam" >&2
+		return 1
+	fi
+
+	if [ -n "$_lstd_outvar" ]; then
+		eval "$_lstd_outvar=$_lstd_c"
+	else
+		printf '%s' "$_lstd_c"
+	fi
+
+	return 0
+}
