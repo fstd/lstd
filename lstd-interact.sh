@@ -40,13 +40,30 @@ lstnam=default
 list_dump "$lstnam"
 echo 'Try "help"'
 
+TAB="$(printf '\t')"
+
 while read -r cmd rest; do
 	e=
 	case "$cmd" in
-	help) Help ;;
-	list) lstnam="$rest" ;;
 	q|quit) break ;;
-	?*) eval "set -- $rest";
+	help) Help ;;
+	list) args="${rest%%#*}"
+	      while :; do
+	        case "$args" in
+	          *$TAB|*' ') args="${args%?}" ;;
+	          *) break ;;
+	        esac
+	      done
+	      lstnam="$args" ;;
+	?*) args="${rest%%#*}"
+	    while :; do
+	      case "$args" in
+	        *$TAB|*' ') args="${args%?}" ;;
+	        *) break ;;
+	      esac
+	    done
+
+	    eval "set -- $args";
 	    if list_$cmd "$lstnam" "$@"; then
 	        echo
 	        case "$cmd" in
