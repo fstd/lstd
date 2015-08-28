@@ -367,83 +367,89 @@ list_slice()
 
 list_foreach()
 {
-	_lstd_lstnam="$1"
-	_lstd_action="$2"
+	# Foreach has a set of unique variable names to cope with the
+	# possibility of list_* functions being called from the callback
+	# function -- that could otherwise affect the _lstd_ variables
+	# in here.  If only ``local'' was POSIX...
+	_lstd_fe_lstnam="$1"
+	_lstd_fe_action="$2"
 
-	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+	eval "_lstd_fe_lstdata=\"\$$_lstd_fe_lstnam\""; eval "set -- $_lstd_fe_lstdata"
 
-	_lstd_retval=0
-	_lstd_c=1
+	_lstd_fe_retval=0
+	_lstd_fe_c=1
 	while [ $# -gt 0 ]; do
-		if ! $_lstd_action "$_lstd_lstnam" $_lstd_c "$1"; then
-			_lstd_retval=1
+		if ! $_lstd_fe_action "$_lstd_fe_lstnam" $_lstd_fe_c "$1"; then
+			_lstd_fe_retval=1
 		fi
 
 		shift
-		_lstd_c=$((_lstd_c+1))
+		_lstd_fe_c=$((_lstd_fe_c+1))
 	done
 
-	return $_lstd_retval
+	return $_lstd_fe_retval
 }
 
 list_collect()
 {
-	_lstd_lstnam="$1"
-	_lstd_decider="$2"
-	_lstd_outvar="$3"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	# Collect has a set of unique variable names reasons stated in _foreach
+	_lstd_cl_lstnam="$1"
+	_lstd_cl_decider="$2"
+	_lstd_cl_outvar="$3"
+	[ "$_lstd_cl_outvar" = '0' ] && _lstd_cl_outvar='_lstd_dummy'
 
-	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+	eval "_lstd_cl_lstdata=\"\$$_lstd_cl_lstnam\""; eval "set -- $_lstd_cl_lstdata"
 
-	_lstd_c=1
-	_lstd_sublst=
+	_lstd_cl_c=1
+	_lstd_cl_sublst=
 	while [ $# -gt 0 ]; do
-		if $_lstd_decider "$_lstd_lstnam" $_lstd_c "$1"; then
-			_lstd_sublst="$_lstd_sublst $(_lstd_esc "$1")"
+		if $_lstd_cl_decider "$_lstd_cl_lstnam" $_lstd_cl_c "$1"; then
+			_lstd_cl_sublst="$_lstd_cl_sublst $(_lstd_esc "$1")"
 		fi
-		_lstd_c=$((_lstd_c+1))
+		_lstd_cl_c=$((_lstd_cl_c+1))
 		shift
 	done
 
-	if [ -n "$_lstd_outvar" ]; then
-		eval "$_lstd_outvar=\"\$_lstd_sublst\""
+	if [ -n "$_lstd_cl_outvar" ]; then
+		eval "$_lstd_cl_outvar=\"\$_lstd_cl_sublst\""
 	else
-		printf '%s' "$_lstd_sublst"
+		printf '%s' "$_lstd_cl_sublst"
 	fi
 
 	return 0
 }
 
 # removes from the given list
-# outputs/assigns the *removed* sublist to stdout/_lstd_outvar
+# outputs/assigns the *removed* sublist to stdout/_lstd_rt_outvar
 list_retain()
 {
-	_lstd_lstnam="$1"
-	_lstd_decider="$2"
-	_lstd_outvar="$3"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	# Retain has a set of unique variable names reasons stated in _foreach
+	_lstd_rt_lstnam="$1"
+	_lstd_rt_decider="$2"
+	_lstd_rt_outvar="$3"
+	[ "$_lstd_rt_outvar" = '0' ] && _lstd_rt_outvar='_lstd_dummy'
 
-	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+	eval "_lstd_rt_lstdata=\"\$$_lstd_rt_lstnam\""; eval "set -- $_lstd_rt_lstdata"
 
-	_lstd_c=1
-	_lstd_newlst=
-	_lstd_remlst=
+	_lstd_rt_c=1
+	_lstd_rt_newlst=
+	_lstd_rt_remlst=
 	while [ $# -gt 0 ]; do
-		if $_lstd_decider "$_lstd_lstnam" $_lstd_c "$1"; then
-			_lstd_newlst="$_lstd_newlst $(_lstd_esc "$1")"
+		if $_lstd_rt_decider "$_lstd_rt_lstnam" $_lstd_rt_c "$1"; then
+			_lstd_rt_newlst="$_lstd_rt_newlst $(_lstd_esc "$1")"
 		else
-			_lstd_remlst="$_lstd_remlst $(_lstd_esc "$1")"
+			_lstd_rt_remlst="$_lstd_rt_remlst $(_lstd_esc "$1")"
 		fi
-		_lstd_c=$((_lstd_c+1))
+		_lstd_rt_c=$((_lstd_rt_c+1))
 		shift
 	done
 
-	eval "$_lstd_lstnam=\"\$_lstd_newlst\""
+	eval "$_lstd_rt_lstnam=\"\$_lstd_rt_newlst\""
 
-	if [ -n "$_lstd_outvar" ]; then
-		eval "$_lstd_outvar=\"\$_lstd_remlst\""
+	if [ -n "$_lstd_rt_outvar" ]; then
+		eval "$_lstd_rt_outvar=\"\$_lstd_rt_remlst\""
 	else
-		printf '%s' "$_lstd_remlst"
+		printf '%s' "$_lstd_rt_remlst"
 	fi
 
 	return 0
