@@ -18,7 +18,7 @@ call _lstd_*() functions.
 --- How it works ---
 
 A `list` is a variable that consists of whitespace-separated `list elements`.
-A `list element` is a string that starts and ends with a single quote. If an
+A `list element` is a string that starts and ends with a single quote.  If an
 element needs to contain literal single quotes, they are translated into the
 4-byte sequence '\''
 This exploits the fact that directly adjacent tokens are not split into
@@ -126,10 +126,10 @@ The other way around works as well:
 which (re)initializes the 'mylist' list with the contents of the positional
 parameters.
 
-The only character NOT allowed in a list element is the NUL byte. This makes
+The only character NOT allowed in a list element is the NUL byte.  This makes
 the list unusable for dealing with arbitrary binary data (why would we anyway),
 but it does make it useful for dealing with arbitrarily braindead filenames
-since they also happen to forbit NUL
+since they also happen to forbid NUL
 
 
 Interface overview:
@@ -309,7 +309,7 @@ list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
 
   <from_index> and <to_index> can be numbers between 1 and
   $(list_count <lstnam>), or zero, in which case they're taken to represent
-  the LAST index availabl.
+  the LAST index available.
   However, <from_index> must be less than or equal to <to_index>
 
   Outputs(*) the sublist.

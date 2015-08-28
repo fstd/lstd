@@ -10,12 +10,13 @@
 
 . ./lstd.inc.sh
 
-commands='set insert replace add_back add_front front back get count dump remove pop_front pop_back slice foreach collect retain fromstr'
+cmds="set insert replace add_back add_front front back get count dump"
+cmds="$cmds remove pop_front pop_back slice foreach collect retain fromstr"
 
 Help()
 {
 	printf 'Set the current list with "list <name>"\n'
-	printf 'Valid commands operating on the current list are: %s\n' "$commands"
+	printf 'Valid commands operating on the current list are: %s\n' "$cmds"
 	printf 'Quote-aware field splitting is done on the lines entered here\n'
 	printf '\n'
 	printf 'The entered commands will just call the respective list_*\n'
