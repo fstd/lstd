@@ -242,13 +242,13 @@ list_get()         <lstnam> <index> [<outvar>]
 list_front()       <lstnam> [<outvar>]
   Convenience function equivalent to list_get <lstnam> 1 <outvar>
 
-  Returns successfully iff the list is not empty
+  Returns successfully iff the list was not empty (but it might be now)
 
 
 list_back()        <lstnam> [<outvar>]
   Convenience function equivalent to list_get <lstnam> 0 <outvar>
 
-  Returns successfully iff the list is not empty
+  Returns successfully iff the list was not empty (but it might be now)
 
 
 list_count()       <lstnam> [<outvar>]
@@ -288,13 +288,13 @@ list_remove()      <lstnam> <index> [<outvar>]
 list_pop_front()   <lstnam> [<outvar>]
   Convenience function equivalent to list_remove <lstnam> 1 <outvar>
 
-  Returns successfully iff the list is not empty
+  Returns successfully iff the list was not empty (but it might be now)
 
 
 list_pop_back()    <lstnam> [<outvar>]
   Convenience function equivalent to list_remove <lstnam> 0 <outvar>
 
-  Returns successfully iff the list is not empty
+  Returns successfully iff the list was not empty (but it might be now)
 
 
 list_slice()       <lstnam> <first_index> <last_index> [<outvar>]
