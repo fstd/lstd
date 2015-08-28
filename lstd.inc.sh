@@ -371,8 +371,15 @@ list_foreach()
 	# possibility of list_* functions being called from the callback
 	# function -- that could otherwise affect the _lstd_ variables
 	# in here.  If only ``local'' was POSIX...
+	if [ -n "$_lstd_fe_executing" ]; then
+		printf 'ERROR: list_foreach() is NOT re-entrant!\n' >&2
+		return 1
+	fi
+
 	_lstd_fe_lstnam="$1"
 	_lstd_fe_action="$2"
+
+	_lstd_fe_executing=1
 
 	eval "_lstd_fe_lstdata=\"\$$_lstd_fe_lstnam\""
 	eval "set -- $_lstd_fe_lstdata"
@@ -388,16 +395,25 @@ list_foreach()
 		_lstd_fe_c=$((_lstd_fe_c+1))
 	done
 
+	unset _lstd_fe_executing
+
 	return $_lstd_fe_retval
 }
 
 list_collect()
 {
 	# Collect has a set of unique variable names reasons stated in _foreach
+	if [ -n "$_lstd_cl_executing" ]; then
+		printf 'ERROR: list_collect() is NOT re-entrant!\n' >&2
+		return 1
+	fi
+
 	_lstd_cl_lstnam="$1"
 	_lstd_cl_decider="$2"
 	_lstd_cl_outvar="$3"
 	[ "$_lstd_cl_outvar" = '0' ] && _lstd_cl_outvar='_lstd_dummy'
+
+	_lstd_cl_executing=1
 
 	eval "_lstd_cl_lstdata=\"\$$_lstd_cl_lstnam\""
 	eval "set -- $_lstd_cl_lstdata"
@@ -418,6 +434,8 @@ list_collect()
 		printf '%s' "$_lstd_cl_sublst"
 	fi
 
+	unset _lstd_cl_executing
+
 	return 0
 }
 
@@ -426,10 +444,17 @@ list_collect()
 list_retain()
 {
 	# Retain has a set of unique variable names reasons stated in _foreach
+	if [ -n "$_lstd_rt_executing" ]; then
+		printf 'ERROR: list_retain() is NOT re-entrant!\n' >&2
+		return 1
+	fi
+
 	_lstd_rt_lstnam="$1"
 	_lstd_rt_decider="$2"
 	_lstd_rt_outvar="$3"
 	[ "$_lstd_rt_outvar" = '0' ] && _lstd_rt_outvar='_lstd_dummy'
+
+	_lstd_rt_executing=1
 
 	eval "_lstd_rt_lstdata=\"\$$_lstd_rt_lstnam\""
 	eval "set -- $_lstd_rt_lstdata"
@@ -454,6 +479,8 @@ list_retain()
 	else
 		printf '%s' "$_lstd_rt_remlst"
 	fi
+
+	unset _lstd_rt_executing
 
 	return 0
 }
