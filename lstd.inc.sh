@@ -85,11 +85,11 @@ list_add_front()
 list_insert()
 {
 	_lstd_lstnam="$1"
-	_lstd_index="$2"
+	_lstd_in_idx="$2" # unique name because calling _lstd_insert_one
 	shift 2
 
 	while [ $# -gt 0 ]; do
-		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_index" "$1"; then
+		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_in_idx" "$1"; then
 			return 1
 		fi
 
@@ -97,7 +97,7 @@ list_insert()
 		# the index but just leave it as 0, so we keep adding at the end
 		# Otherwise, increment the index because we'd reverse the order
 		# of new elements if we didn't.
-		[ $_lstd_index -gt 0 ] && _lstd_index=$((_lstd_index+1))
+		[ $_lstd_in_idx -gt 0 ] && _lstd_in_idx=$((_lstd_in_idx+1))
 		shift
 	done
 
