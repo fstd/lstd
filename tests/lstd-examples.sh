@@ -17,7 +17,7 @@ echo "lstd version $maj.$min.$pat"
 list_set mylist "head element" "another element" "3rd element"
 
 # Add another element at the end of `mylist`
-list_add_back mylist "4th element"
+list_add_back mylist '' "4th element"
 
 # Create a list named 'argv' of the arguments passed to this shell script
 list_set argv "$@"

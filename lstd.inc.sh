@@ -69,26 +69,34 @@ _lstd_esc()
 list_add_back()
 {
 	_lstd_lstnam="$1"
-	shift
+	_lstd_insnum="$2" # may be empty
+	shift 2
 
-	list_insert "$_lstd_lstnam" 0 "$@"
+	list_insert "$_lstd_lstnam" 0 "$_lstd_insnum" "$@"
 }
 
 list_add_front()
 {
 	_lstd_lstnam="$1"
-	shift
+	_lstd_insnum="$2" # may be empty
+	shift 2
 
-	list_insert "$_lstd_lstnam" 1 "$@"
+	list_insert "$_lstd_lstnam" 1 "$_lstd_insnum" "$@"
 }
 
 list_insert()
 {
 	_lstd_lstnam="$1"
 	_lstd_in_idx="$2" # unique name because calling _lstd_insert_one
-	shift 2
+	_lstd_in_max="$3" # number of elements to add (add all if empty)
+	shift 3
 
-	while [ $# -gt 0 ]; do
+	if [ -z "$_lstd_in_max" ] || [ "$_lstd_in_max" -gt $# ]; then
+		_lstd_in_max=$#
+	fi
+
+	_lstd_in_c=0
+	while [ $_lstd_in_c -lt $_lstd_in_max ]; do
 		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_in_idx" "$1"; then
 			return 1
 		fi
@@ -99,6 +107,7 @@ list_insert()
 		# of new elements if we didn't.
 		[ $_lstd_in_idx -gt 0 ] && _lstd_in_idx=$((_lstd_in_idx+1))
 		shift
+		_lstd_in_c=$((_lstd_in_c+1))
 	done
 
 	return 0
@@ -494,7 +503,7 @@ list_set()
 	shift
 
 	eval "$_lstd_lstnam="
-	list_add_back "$_lstd_lstnam" "$@"
+	list_add_back "$_lstd_lstnam" '' "$@"
 }
 
 list_fromstr()
@@ -508,6 +517,7 @@ list_fromstr()
 		_lstd_nifs="$(printf ' \t\nx')"; _lstd_nifs="${_lstd_nifs%x}"
 	fi
 
+	# XXX make sure this works in the korn shell
 	_lstd_oldifs="$IFS"
 	IFS="$_lstd_nifs"
 
@@ -515,7 +525,7 @@ list_fromstr()
 	IFS="$_lstd_oldifs"
 
 	eval "$_lstd_lstnam="
-	list_add_back "$_lstd_lstnam" "$@"
+	list_add_back "$_lstd_lstnam" "" "$@"
 }
 
 list_find()

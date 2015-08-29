@@ -63,8 +63,8 @@ smax=7
 
 # Initialize the test list
 list_set lst "$s3" "$s4" "$s5" || Bomb "Failed to list_set three elements"
-list_add_front lst "$s1" "$s2" || Bomb "Failed to list_add_front two elements"
-list_add_back lst "$s6" "$s7" || Bomb "Failed to list_set two elements"
+list_add_front lst '' "$s1" "$s2" || Bomb "Failed to list_add_front two elements"
+list_add_back lst '' "$s6" "$s7" || Bomb "Failed to list_set two elements"
 
 [ $(list_count lst) -eq $smax ] || Bomb "$smax-element list count not $smax"
 

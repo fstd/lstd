@@ -138,10 +138,10 @@ Interface overview:
 The following interface is defined to deal with lists.
 (Detailed description below)
 list_set()         <lstnam> <list elements ...>
-list_insert()      <lstnam> <index> <list elements ...>
+list_insert()      <lstnam> <index> <amount> <list elements ...>
 list_replace()     <lstnam> <index> <list element>
-list_add_back()    <lstnam> <list elements ...>
-list_add_front()   <lstnam> <list elements ...>
+list_add_back()    <lstnam> <amount> <list elements ...>
+list_add_front()   <lstnam> <amount> <list elements ...>
 list_front()       <lstnam> [<outvar>]
 list_back()        <lstnam> [<outvar>]
 list_get()         <lstnam> <index> [<outvar>]
@@ -201,25 +201,37 @@ list_set()         <lstnam> <list elements ...>
   Returns successfully.
 
 
-list_insert()      <lstnam> <index> <list elements ...>
-  Insert elements <list elements ...> into list <lstnam> at index <index>.
+list_insert()      <lstnam> <index> <amount> <list elements ...>
+  Insert no more than <amount> <list elements ...> into list <lstnam>,
+  beginning at index <index>.
   The element originally at <index> and all following elements' indices will
   be incremented by the amount of newly added elements (i.e. shift right)
 
   <index> can be a number between 1 and $(list_count <lstnam>), or zero, in
   which case we're adding at the END of the list
 
+  <amount> can be used to limit the amount of added elements.
+  If it is empty (''), all given list elements are added.
+
   Returns successfully iff the element(s) were all inserted.
 
 
-list_add_back()    <lstnam> <list elements ...>
-  Convenience function, equiv. to list_insert <lstnam> 0 <list elements ...>
+list_add_back()    <lstnam> <amount> <list elements ...>
+  Convenience function.
+  Equivalent to list_insert <lstnam> 0 <amount> <list elements ...>
+
+  <amount> can be used to limit the amount of added elements.
+  If it is empty (''), all given list elements are added.
 
   Returns successfully.
 
 
-list_add_front()   <lstnam> <list elements ...>
-  Convenience function, equiv. to list_insert <lstnam> 1 <list elements ...>
+list_add_front()   <lstnam> <amount> <list elements ...>
+  Convenience function.
+  Equivalent to list_insert <lstnam> 1 <amount> <list elements ...>
+
+  <amount> can be used to limit the amount of added elements.
+  If it is empty (''), all given list elements are added.
 
   Returns successfully.
 
