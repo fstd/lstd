@@ -46,6 +46,9 @@ _lstd_ver_pat=0
 
 # This is still work in progress
 
+_lstd_TAB="$(printf '\t')"
+_lstd_NL="$(printf '\nx')"; _lstd_NL="${_lstd_NL%x}"
+
 
 # Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
 # then encloses the result in single quotes and prints it to standard output
@@ -517,15 +520,30 @@ list_fromstr()
 		_lstd_nifs="$(printf ' \t\nx')"; _lstd_nifs="${_lstd_nifs%x}"
 	fi
 
-	# XXX make sure this works in the korn shell
+	# Tests for ksh-ish non-whitespace-IFS behavior; sets _lstd_kshish_ifs 
+	# accordingly.  We need to know this because ksh and bourne-ish shells
+	# have different behavior when it comes to trailing delimiter char.
+	# I.e. with IFS='x', 'foox' is considered TWO fields by ksh, but ONE
+	# fields by bourne-ish shells.  Likewise, 'fooxxx' is FOUR fields in
+	# ksh, but THREE fields in bourne-like shells.  I.e. what bourne
+	# shells do is trim off one (and only one) trailing delimiter character,
+	# if present.
+	_lstd_test_kshish_ifs
+
 	_lstd_oldifs="$IFS"
 	IFS="$_lstd_nifs"
-
 	set -- $_lstd_str
 	IFS="$_lstd_oldifs"
 
+	_lstd_subtr=0
+	if $_lstd_kshish_ifs && endsin "$_lstd_str" "$_lstd_nifs"; then
+		if ! endsin "$_lstd_str" "$_lstd_TAB $_lstd_NL"; then
+			_lstd_subtr=1 #We're ksh-ish and have trailing nonWS-IFS
+		fi
+	fi
+
 	eval "$_lstd_lstnam="
-	list_add_back "$_lstd_lstnam" "" "$@"
+	list_add_back "$_lstd_lstnam" "$(($#-$_lstd_subtr))" "$@"
 }
 
 list_find()
@@ -577,5 +595,25 @@ list_version()
 	[ -n "$_lstd_outvar_min" ] && eval "$_lstd_outvar_min=$_lstd_ver_min"
 	[ -n "$_lstd_outvar_pat" ] && eval "$_lstd_outvar_pat=$_lstd_ver_pat"
 
-	return 0;
+	return 0
+}
+
+# No args
+_lstd_test_kshish_ifs()
+{
+	case "x$_lstd_kshish_ifs" in
+		xtrue|xfalse) return ;;
+	esac
+
+	_lstd_oldifs="$IFS"
+	_lstd_dummy='foox'
+	IFS='x'
+	set -- $_lstd_dummy
+	IFS="$_lstd_oldifs"
+	
+	if [ $# -eq 2 ]; then
+		_lstd_kshish_ifs=true
+	else
+		_lstd_kshish_ifs=false
+	fi
 }
