@@ -52,6 +52,8 @@ _lstd_NL="$(printf '\nx')"; _lstd_NL="${_lstd_NL%x}"
 
 # Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
 # then encloses the result in single quotes and prints it to standard output
+
+# 1: Input to be escaped
 _lstd_esc()
 {
 	_lstd_input="$1"
@@ -69,6 +71,7 @@ _lstd_esc()
 	printf "'"
 }
 
+# 1: List name, 2: Max. amount (empty=all), 3...: Elements
 list_add_back()
 {
 	_lstd_lstnam="$1"
@@ -78,6 +81,7 @@ list_add_back()
 	list_insert "$_lstd_lstnam" 0 "$_lstd_insnum" "$@"
 }
 
+# 1: List name, 2: Max. amount (empty=all), 3...: Elements
 list_add_front()
 {
 	_lstd_lstnam="$1"
@@ -87,6 +91,7 @@ list_add_front()
 	list_insert "$_lstd_lstnam" 1 "$_lstd_insnum" "$@"
 }
 
+# 1: List name, 2: Start index, 3: Max. amount (empty=all), 4...: Elements
 list_insert()
 {
 	_lstd_lstnam="$1"
@@ -118,6 +123,7 @@ list_insert()
 
 # list_insert's backend, inserts one element into a list. We need this to be
 # a separate function to enable list_insert to accept multiple elements at once
+# 1: List name, 2: Start index, 3: Element
 _lstd_insert_one()
 {
 	_lstd_lstnam="$1"
@@ -158,6 +164,7 @@ _lstd_insert_one()
 	return 0
 }
 
+# 1: List name, 2: Index to replace, 3: Element, [4: Output variable name]
 list_replace()
 {
 	_lstd_lstnam="$1"
@@ -201,16 +208,19 @@ list_replace()
 	return 0
 }
 
+# 1: List name, [2: Output variable name]
 list_front()
 {
 	list_get "$1" 1 "$2"
 }
 
+# 1: List name, [2: Output variable name]
 list_back()
 {
 	list_get "$1" 0 "$2"
 }
 
+# 1: List name, 2: Index to get, [3: Output variable name]
 list_get()
 {
 	_lstd_lstnam="$1"
@@ -236,6 +246,7 @@ list_get()
 	return 0
 }
 
+# 1: List name, [2: Output variable name]
 list_count()
 {
 	_lstd_lstnam="$1"
@@ -253,6 +264,7 @@ list_count()
 }
 
 
+# 1: List name
 list_dump()
 {
 	_lstd_lstnam="$1"
@@ -274,6 +286,7 @@ list_dump()
 	return 0
 }
 
+# 1: List name, 2: Index to remove, [3: Output variable name]
 list_remove()
 {
 	_lstd_lstnam="$1"
@@ -316,16 +329,19 @@ list_remove()
 }
 
 
+# 1: List name, [2: Output variable name]
 list_pop_front()
 {
 	list_remove "$1" 1 "$2"
 }
 
+# 1: List name, [2: Output variable name]
 list_pop_back()
 {
 	list_remove "$1" 0 "$2"
 }
 
+# 1: List name, 2: First index, 3: Last index, [4: Output variable name (sublist)]
 list_slice()
 {
 	_lstd_lstnam="$1"
@@ -380,6 +396,7 @@ list_slice()
 	return 0
 }
 
+# 1: List name, 2: Callback function
 list_foreach()
 {
 	# Foreach has a set of unique variable names to cope with the
@@ -415,6 +432,7 @@ list_foreach()
 	return $_lstd_fe_retval
 }
 
+# 1: List name, 2: Decider function, [3: Output variable name]
 list_collect()
 {
 	# Collect has a set of unique variable names reasons stated in _foreach
@@ -456,6 +474,7 @@ list_collect()
 
 # removes from the given list
 # outputs/assigns the *removed* sublist to stdout/_lstd_rt_outvar
+# 1: List name, 2: Decider function, [3: Output variable name]
 list_retain()
 {
 	# Retain has a set of unique variable names reasons stated in _foreach
@@ -500,6 +519,7 @@ list_retain()
 	return 0
 }
 
+# 1: List name, 2...: Elements
 list_set()
 {
 	_lstd_lstnam="$1"
@@ -509,6 +529,10 @@ list_set()
 	list_add_back "$_lstd_lstnam" '' "$@"
 }
 
+
+# 1: List name, 2: String
+# OR:
+# 1: List name, 2: IFS, 3: String
 list_fromstr()
 {
 	_lstd_lstnam="$1"
@@ -546,6 +570,7 @@ list_fromstr()
 	list_add_back "$_lstd_lstnam" "$(($#-$_lstd_subtr))" "$@"
 }
 
+# 1: List name, 2: Element to find, [3: Output variable name]
 list_find()
 {
 	_lstd_lstnam="$1"
@@ -580,6 +605,7 @@ list_find()
 	return 0
 }
 
+# [1: Output varname (maj), 2: Output varname (min), 3: Output varname (pat)]
 list_version()
 {
 	_lstd_outvar_maj="$1"
