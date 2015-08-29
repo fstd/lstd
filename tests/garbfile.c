@@ -6,12 +6,15 @@
  * NUL (\0) and SLASH (/).
  */
 
+#define _BSD_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
 
+#include <sys/time.h>
 #include <time.h>
 #include <sys/stat.h>
 #include <fcntl.h>
