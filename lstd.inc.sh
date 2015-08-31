@@ -56,17 +56,17 @@ _lstd_NL="$(printf '\nx')"; _lstd_NL="${_lstd_NL%x}"
 # 1: Input to be escaped
 _lstd_esc()
 {
-	_lstd_input="$1"
+	_lstd_ce_input="$1"
 
 	# Credits to Edgar Fuss for the approach
 	printf "'"
 	while :; do
-		case "$_lstd_input" in
-			\'*) printf "'\\\\''"           ;; # '\''
-			 ?*) printf '%c' "$_lstd_input" ;;
-			 "") break                      ;;
+		case "$_lstd_ce_input" in
+			\'*) printf "'\\\\''"              ;; # '\''
+			 ?*) printf '%c' "$_lstd_ce_input" ;;
+			 "") break                         ;;
 		esac
-		_lstd_input="${_lstd_input#?}"
+		_lstd_ce_input="${_lstd_ce_input#?}"
 	done
 	printf "'"
 }
@@ -95,17 +95,17 @@ list_add_front()
 list_insert()
 {
 	_lstd_lstnam="$1"
-	_lstd_in_idx="$2" # unique name because calling _lstd_insert_one
-	_lstd_in_max="$3" # number of elements to add (add all if empty)
+	_lstd_index="$2"
+	_lstd_insnum="$3"
 	shift 3
 
-	if [ -z "$_lstd_in_max" ] || [ "$_lstd_in_max" -gt $# ]; then
-		_lstd_in_max=$#
+	if [ -z "$_lstd_insnum" ] || [ "$_lstd_insnum" -gt $# ]; then
+		_lstd_insnum=$#
 	fi
 
 	_lstd_in_c=0
-	while [ $_lstd_in_c -lt $_lstd_in_max ]; do
-		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_in_idx" "$1"; then
+	while [ $_lstd_in_c -lt $_lstd_insnum ]; do
+		if ! _lstd_insert_one "$_lstd_lstnam" "$_lstd_index" "$1"; then
 			return 1
 		fi
 
@@ -113,7 +113,7 @@ list_insert()
 		# the index but just leave it as 0, so we keep adding at the end
 		# Otherwise, increment the index because we'd reverse the order
 		# of new elements if we didn't.
-		[ $_lstd_in_idx -gt 0 ] && _lstd_in_idx=$((_lstd_in_idx+1))
+		[ $_lstd_index -gt 0 ] && _lstd_index=$((_lstd_index+1))
 		shift
 		_lstd_in_c=$((_lstd_in_c+1))
 	done
@@ -126,40 +126,41 @@ list_insert()
 # 1: List name, 2: Start index, 3: Element
 _lstd_insert_one()
 {
-	_lstd_lstnam="$1"
-	_lstd_index="$2"
-	_lstd_elem="$(_lstd_esc "$3")"
+	_lstd_io_lstnam="$1"
+	_lstd_io_index="$2"
+	_lstd_io_elem="$(_lstd_esc "$3")"
 
-	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+	eval "_lstd_io_lstdata=\"\$$_lstd_io_lstnam\""
+	eval "set -- $_lstd_io_lstdata"
 
 	# Index 0 means insert *after* the last element, hence $(($#+1))
-	[ "$_lstd_index" -eq 0 ] && _lstd_index=$(($#+1))
+	[ "$_lstd_io_index" -eq 0 ] && _lstd_io_index=$(($#+1))
 
-	if [ "$_lstd_index" -gt $(($#+1)) -o "$_lstd_index" -le 0 ]; then
+	if [ "$_lstd_io_index" -gt $(($#+1)) -o "$_lstd_io_index" -le 0 ]; then
 		#printf 'Cannot insert at index %s into %s-sized list `%s`\n' \
-		#    "$_lstd_index" $# "$_lstd_lstnam" >&2
+		#    "$_lstd_io_index" $# "$_lstd_io_lstnam" >&2
 		return 1
 	fi
 
-	_lstd_c=1
-	_lstd_inserted=false
-	_lstd_newlst=
+	_lstd_io_c=1
+	_lstd_io_inserted=false
+	_lstd_io_newlst=
 	while [ $# -gt 0 ]; do
-		if [ $_lstd_c -eq "$_lstd_index" ]; then
-			_lstd_newlst="$_lstd_newlst $_lstd_elem"
-			_lstd_inserted=true
+		if [ $_lstd_io_c -eq "$_lstd_io_index" ]; then
+			_lstd_io_newlst="$_lstd_io_newlst $_lstd_io_elem"
+			_lstd_io_inserted=true
 		fi
-		_lstd_newlst="$_lstd_newlst $(_lstd_esc "$1")"
-		_lstd_c=$((_lstd_c+1))
+		_lstd_io_newlst="$_lstd_io_newlst $(_lstd_esc "$1")"
+		_lstd_io_c=$((_lstd_io_c+1))
 		shift
 	done
 
 	# If we have nothing inserted yet, we insert after the last element.
-	if ! $_lstd_inserted; then
-		_lstd_newlst="$_lstd_newlst $_lstd_elem"
+	if ! $_lstd_io_inserted; then
+		_lstd_io_newlst="$_lstd_io_newlst $_lstd_io_elem"
 	fi
 
-	eval "$_lstd_lstnam=\"\$_lstd_newlst\""
+	eval "$_lstd_io_lstnam=\"\$_lstd_io_newlst\""
 
 	return 0
 }
