@@ -51,7 +51,8 @@ test_func()
 randstr=
 Main()
 {
-	if [ -n "$1" ]; then
+	mode="$1"
+	if [ -n "$mode" ]; then
 		randstr='randstr'
 		if ! which $randstr >/dev/null 2>/dev/null; then
 			if ! [ -x "./tools/randstr" ]; then
@@ -62,7 +63,7 @@ Main()
 			randstr="./tools/randstr"
 		fi
 
-		RandomElems "$1"
+		RandomElems "$mode"
 	fi
 	retval=0
 	#for f in $funx; do
@@ -81,6 +82,21 @@ Main()
 	done
 
 	echo "Extension tests done" >&2
+
+	if [ $retval -ne 0 ]; then
+		printf 'Failure report (%s, mode %s):\n' "$(date)" "$mode"
+		for f in 1 2 3 4 5 6 7 8 9; do
+			printf 'Elem %s:\n' "$f"
+			eval "orig=\"\$elem$f\""
+			printf '%s' "$orig" | hexdump -C >&2
+		done
+		printf 'Environment:\n'
+		env >&2
+		printf 'Set:\n'
+		set >&2
+		printf 'End of failure report\n'
+
+	fi
 
 	return $retval
 }
