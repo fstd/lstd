@@ -48,8 +48,22 @@ test_func()
 	fi
 }
 
+randstr=
 Main()
 {
+	if [ -n "$1" ]; then
+		randstr='randstr'
+		if ! which $randstr >/dev/null 2>/dev/null; then
+			if ! [ -x "./tools/randstr" ]; then
+				printf 'Build the randstr tool first (cc -std=c99 -o randstr randstr.c)\n' >&2
+				exit 1
+			fi
+
+			randstr="./tools/randstr"
+		fi
+
+		RandomElems "$1"
+	fi
 	retval=0
 	#for f in $funx; do
 	for f in $(echo "$funx"); do #command subst is a zsh workaround
@@ -87,6 +101,34 @@ elem6="$TAB$TAB$TAB"
 elem7="$NL$NL$NL"
 elem8="$SQ"
 elem9="$DQ"
+
+
+RandomElems()
+{
+	mode="$1"
+
+	rsmin=32
+	rsmax=126
+	printf 'Randomizing mode %s\n' "$mode" >&2
+	if [ "$mode" -eq 1 ]; then
+		rsmin=1
+		rsmax=126
+	elif [ "$mode" -eq 2 ]; then
+		rsmin=32
+		rsmax=255
+	elif [ "$mode" -eq 3 ]; then
+		rsmin=1
+		rsmax=255
+	fi
+	
+	for f in 1 2 3 4 5 6 7 8 9; do
+		e="$($randstr 0 128 "$rsmin" "$rsmax"; echo x)"
+		e="${e%x}"
+
+		eval "elem$f=\"\$e\""
+	done
+}
+
 
 test_list_set()
 {
