@@ -48,7 +48,7 @@ if ! $_lstd_found_helpers; then
 	if which "$_lstd_src" 2>/dev/null >/dev/null; then
 		target="$_lstd_src"
 	else
-		for f in '/' '../' 'extentions/' '../extensions/'; do
+		for f in '/' '../' './extensions/' '../extensions/'; do
 			if [ -f "$f$_lstd_src" ]; then
 				_lstd_target="$f$_lstd_src"
 				break
@@ -57,7 +57,7 @@ if ! $_lstd_found_helpers; then
 	fi
 
 	if [ -z "$_lstd_target" ]; then
-		printf '%s: Could not source %s. Put in \$PATH or CWD.\n' \
+		printf '%s: Could not source %s. Put in $PATH or CWD.\n' \
 		    "$_lstd_curfile" "$_lstd_src"
 		exit 1
 	fi
