@@ -405,3 +405,5 @@ list_version()
 	return 0
 }
 
+
+_lstd_sourced="$_lstd_sourced lstd.inc.sh"
