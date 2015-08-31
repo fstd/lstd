@@ -7,13 +7,6 @@
 
 # This is still work in progress
 
-Bomb()
-{
-	printf 'ERROR: %s\n' "$1" >&2
-	exit 1
-}
-
-
 for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
 	target="$(which "$src" 2>/dev/null)"
 	if [ -z "$target" ]; then
@@ -25,11 +18,10 @@ for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
 		done
 	fi
 
-	[ -z "$target" ] && Bomb "Could not source $src. Put in \$PATH or CWD."
-	printf '%s: Sourcing %s\n' "$0" "$target"
+	[ -z "$target" ] && { printf "Could not source $src. Put in \$PATH or CWD.\n" >&2; exit 1; }
+	#printf '%s: Sourcing %s\n' "$0" "$target"
 	. $target
 done
-
 
 
 cmds="set insert replace add_back add_front front back get count dump"

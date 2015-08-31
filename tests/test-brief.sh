@@ -32,8 +32,8 @@ for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
 		done
 	fi
 
-	[ -z "$target" ] && Bomb "Could not source $src. Put in \$PATH or CWD."
-	printf '%s: Sourcing %s\n' "$0" "$target"
+	[ -z "$target" ] && { printf "Could not source $src. Put in \$PATH or CWD.\n" >&2; exit 1; }
+	#printf '%s: Sourcing %s\n' "$0" "$target"
 	. $target
 done
 
