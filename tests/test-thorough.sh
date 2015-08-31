@@ -107,11 +107,15 @@ TAB="$(printf '\t')"
 SQ="'"
 DQ='"'
 C1="$(printf '\1')"
+Cd4="$(printf '\324')"
+Cfc="$(printf '\374')"
+Ced="$(printf '\355')"
 
 elem1=" foo bar "
 elem2=" $TAB${BS}foo$C1 ${SQ}b$DQa${NL}r$NL$NL$NL"
 elem3=''
-elem4='\'
+elem4="$Cd4$Cfc$Ced"
+#elem4='\'
 elem5="*"
 elem6="$TAB$TAB$TAB"
 elem7="$NL$NL$NL"
