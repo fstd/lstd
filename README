@@ -146,7 +146,7 @@ list_front()       <lstnam> [<outvar>]
 list_back()        <lstnam> [<outvar>]
 list_get()         <lstnam> <index> [<outvar>]
 list_count()       <lstnam> [<outvar>]
-list_find()        <lstnam> <list element> [<outvar>]
+list_find()        <lstnam> <start index> <list element> [<outvar>]
 list_dump()        <lstnam>
 list_remove()      <lstnam> <index> [<outvar>]
 list_pop_front()   <lstnam> [<outvar>]
@@ -276,9 +276,11 @@ list_count()       <lstnam> [<outvar>]
   Returns successfully.
 
 
-list_find()        <lstnam> <list element> [<outvar>]
+list_find()        <lstnam> <start index> <list element> [<outvar>]
   Attempts to find an element of list <lstnam> that compares equal to
-  <list element>
+  <list element>, beginning the search at <start index>
+
+  <start index> can be a number between 1 and $(list_count <lstnam>)
 
   Outputs(*) the index of the element, if found, zero otherwise
 

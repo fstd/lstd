@@ -387,16 +387,22 @@ test_list_find()
 	list_set lst "$elem1" "$elem2" "$elem3" "$elem4" "$elem5" "$elem6" "$elem7" "$elem8" "$elem9"
 
 	c=1
+	si=1
 	while [ $c -le 9 ]; do
 		eval "orig=\"\$elem$c\""
 
-		if ! list_find lst "$orig" out; then
+		if ! list_find lst $si "$orig" out; then
 			Complain "Did not find \`$orig\` in list"
 			return 1
 		fi
 
-		# XXX this test will break for lists that contain multiple identical elements
-		[ "x$out" '=' "x$c" ] || { Complain "'found' element at $out but we expected $c"; return 1; }
+		while ! [ "x$out" '=' "x$c" ]; do
+			si=$((out+1))
+			if ! list_find lst $si "$orig" out; then
+				Complain "Did not find (the right) \`$orig\` in list"
+				return 1
+			fi
+		done
 
 		c=$((c+1))
 	done

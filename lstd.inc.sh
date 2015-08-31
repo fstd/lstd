@@ -353,11 +353,18 @@ list_set()
 list_find()
 {
 	_lstd_lstnam="$1"
-	_lstd_str="$2"
-	_lstd_outvar="$3"
+	_lstd_index="$2"
+	_lstd_str="$3"
+	_lstd_outvar="$4"
 	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
+
+	_lstd_add=0
+	if [ "$_lstd_index" -gt 1 ]; then
+		_lstd_add=$((_lstd_index-1))
+		shift $_lstd_add
+	fi
 
 	_lstd_c=1
 	while [ $# -gt 0 ]; do
@@ -378,9 +385,9 @@ list_find()
 	fi
 
 	if [ -n "$_lstd_outvar" ]; then
-		eval "$_lstd_outvar=$_lstd_c"
+		eval "$_lstd_outvar=$((_lstd_c+_lstd_add))"
 	else
-		printf '%s' "$_lstd_c"
+		printf '%s' "$((_lstd_c+_lstd_add))"
 	fi
 
 	return $_lstd_ret
