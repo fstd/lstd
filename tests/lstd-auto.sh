@@ -15,13 +15,27 @@ if [ "x$1" = "x-x" ]; then
 	set -x
 fi
 
-. ../lstd.inc.sh
-
 Bomb()
 {
 	printf 'ERROR: %s\n' "$1" >&2
 	exit 1
 }
+
+for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
+	target="$(which "$src" 2>/dev/null)"
+	if [ -z "$target" ]; then
+		for f in './' '../' './extensions/' '../extensions/'; do
+			if [ -f "$f$src" ]; then
+				target="$f$src"
+				break
+			fi
+		done
+	fi
+
+	[ -z "$target" ] && Bomb "Could not source $src. Put in \$PATH or CWD."
+	printf '%s: Sourcing %s\n' "$0" "$target"
+	. $target
+done
 
 TAB="$(printf '\t')"
 NL='

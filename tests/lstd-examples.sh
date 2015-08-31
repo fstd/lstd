@@ -7,8 +7,29 @@
 
 # This is still work in progress
 
+Bomb()
+{
+	printf 'ERROR: %s\n' "$1" >&2
+	exit 1
+}
 
-. ../lstd.inc.sh
+
+for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
+	target="$(which "$src" 2>/dev/null)"
+	if [ -z "$target" ]; then
+		for f in './' '../' './extensions/' '../extensions/'; do
+			if [ -f "$f$src" ]; then
+				target="$f$src"
+				break
+			fi
+		done
+	fi
+
+	[ -z "$target" ] && Bomb "Could not source $src. Put in \$PATH or CWD."
+	printf '%s: Sourcing %s\n' "$0" "$target"
+	. $target
+done
+
 
 list_version maj min pat
 echo "lstd version $maj.$min.$pat"
