@@ -2,7 +2,8 @@
 
 ec=0
 
-for f in sh dash bash posh ksh pdksh zsh; do
+#for f in sh dash bash posh ksh pdksh zsh; do
+for f in sh dash bash posh ksh pdksh mksh; do
 	if ! which $f 2>/dev/null >/dev/null; then
 		echo "Shell '$f' not found" >&2
 		continue
