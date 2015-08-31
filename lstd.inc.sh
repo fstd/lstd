@@ -46,10 +46,6 @@ _lstd_ver_pat=0
 
 # This is still work in progress
 
-_lstd_TAB="$(printf '\t')"
-_lstd_NL="$(printf '\nx')"; _lstd_NL="${_lstd_NL%x}"
-
-
 # Replaces every occurence of ' in the supplied argument with '\'' (4 chars),
 # then encloses the result in single quotes and prints it to standard output
 
@@ -165,6 +161,7 @@ _lstd_insert_one()
 	return 0
 }
 
+# this could be implemented in terms of list_remove+list_insert
 # 1: List name, 2: Index to replace, 3: Element, [4: Output variable name]
 list_replace()
 {
@@ -172,7 +169,7 @@ list_replace()
 	_lstd_index="$2"
 	_lstd_elem="$(_lstd_esc "$3")"
 	_lstd_outvar="$4"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
@@ -227,7 +224,7 @@ list_get()
 	_lstd_lstnam="$1"
 	_lstd_index="$2"
 	_lstd_outvar="$3"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
@@ -252,7 +249,7 @@ list_count()
 {
 	_lstd_lstnam="$1"
 	_lstd_outvar="$2"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
@@ -293,7 +290,7 @@ list_remove()
 	_lstd_lstnam="$1"
 	_lstd_index="$2"
 	_lstd_outvar="$3"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
@@ -358,13 +355,13 @@ list_find()
 	_lstd_lstnam="$1"
 	_lstd_str="$2"
 	_lstd_outvar="$3"
-	[ "$_lstd_outvar" = '0' ] && _lstd_outvar='_lstd_dummy'
+	[ "$_lstd_outvar" '=' '0' ] && _lstd_outvar='_lstd_dummy'
 
 	eval "_lstd_lstdata=\"\$$_lstd_lstnam\""; eval "set -- $_lstd_lstdata"
 
 	_lstd_c=1
 	while [ $# -gt 0 ]; do
-		if [ "$1" = "$2" ]; then
+		if [ "$1" '=' "$_lstd_str" ]; then
 			break
 		fi
 
