@@ -369,10 +369,12 @@ list_find()
 		_lstd_c=$((_lstd_c+1))
 	done
 
+	_lstd_ret=0
 	if [ $# -eq 0 ]; then
 		#printf 'Did not find element in list `%s`\n' \
 		#    "$_lstd_lstnam" >&2
-		return 1
+		_lstd_c=''
+		_lstd_ret=1
 	fi
 
 	if [ -n "$_lstd_outvar" ]; then
@@ -381,7 +383,7 @@ list_find()
 		printf '%s' "$_lstd_c"
 	fi
 
-	return 0
+	return $_lstd_ret
 }
 
 # [1: Output varname (maj), 2: Output varname (min), 3: Output varname (pat)]
