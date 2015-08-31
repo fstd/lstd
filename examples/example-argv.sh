@@ -7,9 +7,13 @@
 
 # This is still work in progress
 
+# A lot of code just to source two files -- but we want to be able to run
+# the examples and tests whether or not lstd is in $PATH or not
 for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
-	target="$(which "$src" 2>/dev/null)"
-	if [ -z "$target" ]; then
+	target=
+	if which "$src" 2>/dev/null >/dev/null; then
+		target="$src"
+	else
 		for f in './' '../' './extensions/' '../extensions/'; do
 			if [ -f "$f$src" ]; then
 				target="$f$src"
@@ -19,7 +23,6 @@ for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
 	fi
 
 	[ -z "$target" ] && { printf "Could not source $src. Put in \$PATH or CWD.\n" >&2; exit 1; }
-	#printf '%s: Sourcing %s\n' "$0" "$target"
 	. $target
 done
 
@@ -33,23 +36,23 @@ list_set mylist "head element" "another element" "3rd element"
 # Add another element at the end of `mylist`
 list_add_back mylist '' "4th element"
 
-# Create a list named 'argv' of the arguments passed to this shell script
-list_set argv "$@"
+# Create a list named 'xargv' of the arguments passed to this shell script
+list_set xargv "$@"
 
 # Let's make a copy of it
-argv_copy="$argv"
+argv_copy="$xargv"
 
-# Iterate over our `argv` array, popping it empty.
-while list_pop_front argv elem; do
+# Iterate over our `xargv` array, popping it empty.
+while list_pop_front xargv elem; do
 	printf 'List element: `%s`\n' "$elem"
 done
 
 # Or, non-destructively iterate over it (after restoring our copy)
-argv="$argv_copy"
-list_count argv count
+xargv="$argv_copy"
+list_count xargv count
 c=1
 while [ $c -le $count ]; do
-	list_get argv $c elem
+	list_get xargv $c elem
 	printf 'List element: `%s`\n' "$elem"
 	c=$((c+1))
 done
@@ -70,7 +73,7 @@ callback()
 	list_replace "$listname" "$index" "foo $elem bar" 0
 }
 
-list_foreach argv callback
+list_foreach xargv callback
 
 # Dump the list to see how it was mangled by the callback
-list_dump argv
+list_dump xargv

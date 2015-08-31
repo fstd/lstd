@@ -45,8 +45,9 @@ fi
 
 if ! $_lstd_found_helpers; then
 	_lstd_src='lstd-ext-helpers.inc.sh'
-	_lstd_target="$(which "$_lstd_src" 2>/dev/null)"
-	if [ -z "$_lstd_target" ]; then
+	if which "$_lstd_src" 2>/dev/null >/dev/null; then
+		target="$_lstd_src"
+	else
 		for f in '/' '../' 'extentions/' '../extensions/'; do
 			if [ -f "$f$_lstd_src" ]; then
 				_lstd_target="$f$_lstd_src"

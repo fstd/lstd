@@ -1,9 +1,13 @@
 #!/bin/sh
 #set -x
 
+# A lot of code just to source two files -- but we want to be able to run
+# the examples and tests whether or not lstd is in $PATH or not
 for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
-	target="$(which "$src" 2>/dev/null)"
-	if [ -z "$target" ]; then
+	target=
+	if which "$src" 2>/dev/null >/dev/null; then
+		target="$src"
+	else
 		for f in './' '../' './extensions/' '../extensions/'; do
 			if [ -f "$f$src" ]; then
 				target="$f$src"
@@ -13,7 +17,6 @@ for src in 'lstd.inc.sh' 'lstd-ext.inc.sh'; do
 	fi
 
 	[ -z "$target" ] && { printf "Could not source $src. Put in \$PATH or CWD.\n" >&2; exit 1; }
-	#printf '%s: Sourcing %s\n' "$0" "$target"
 	. $target
 done
 
